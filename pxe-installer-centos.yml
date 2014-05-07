@@ -1,0 +1,46 @@
+---
+- hosts: all
+  
+  #vars:
+
+  tasks:
+
+    - name: Install Requirements
+      yum: name={{ item }} state=installed
+      with_items:
+        - tftp-server
+        - syslinux
+        - httpd
+
+    - name: Create tftp directory
+      file: path=/tftpboot state=directory
+
+    - name: Copy syslinux files
+      command: cp /usr/share/syslinux/{{ item }} /tftpboot/ creates=/usr/share/syslinux/{{ item }}
+      with_items:
+        - pxelinux.0
+        - menu.c32
+        - memdisk
+        - mboot.c32
+        - chain.c32
+
+    - name: Create pxelinux.cfg directory
+      file: path=/tftpboot/pxelinux.cfg state=directory
+
+    - name: Update xinetd.d service
+      copy: src=files/xinetd_tftp dest=/etc/xinetd.d/tftp owner=root group=root mode=0644
+      notify:
+        - restart xinetd
+
+    - name: Create Boot Image Directories
+      file: path=/tftpboot/images/{{ item }} state=directory
+      with_items:
+        - oracle5.8
+        - axxana-iso18
+
+  handlers:
+
+    - name: restart xinetd
+      service: name=xinetd state=restarted
+
+
