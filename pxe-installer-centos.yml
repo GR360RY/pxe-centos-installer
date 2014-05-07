@@ -38,9 +38,17 @@
         - oracle5.8
         - axxana-iso18
 
+    - name: Update Apache configuration for PXE
+      template: src=files/pxeboot.conf dest=/etc/httpd/conf.d/pxeboot.conf
+      notify:
+        - restart apache
+
+
   handlers:
 
     - name: restart xinetd
       service: name=xinetd state=restarted
 
+    - name: restart apache
+      service: name=httpd state=restarted
 
