@@ -1,0 +1,28 @@
+install
+lang en_US.UTF-8
+keyboard us
+network --device eth0 --bootproto dhcp
+rootpw --iscrypted $1$sqKActEw$aOIJY6TGRmE3XcAJQ8oCb/
+firewall --disabled
+firstboot --disable
+authconfig --enableshadow --enablemd5
+selinux --disabled
+timezone --utc Asia/Jerusalem
+bootloader --location=mbr --driveorder=sda
+text
+url --url=ftp://bootsrv.infinidat.com/media/CentOS-5.6-x86_64
+skipx
+reboot
+# The following is the partition information you requested
+# Note that any partitions you deleted are not expostssed
+# here so unless you clear all partitions first, this is
+# not guaranteed to work
+clearpart --all
+part / --fstype ext3 --size=1 --grow
+part swap --recommended
+zerombr yes
+%packages
+@base
+@core
+@text-internet
+keyutils
